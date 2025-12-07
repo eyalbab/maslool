@@ -1,3 +1,4 @@
+```mermaid
 erDiagram
 
     %% ============================
@@ -19,7 +20,7 @@ erDiagram
     ORG_UNITS {
         uuid id PK
         text name
-        text kind         %% BATTALION | BATTERY | PLATOON | TEAM | GENERIC
+        text kind
         uuid parent_unit_id FK
         timestamptz created_at
         timestamptz updated_at
@@ -36,10 +37,10 @@ erDiagram
         uuid id PK
         uuid user_id FK
         uuid org_unit_id FK
-        text position_level       %% UNIT_COMMANDER | SUBUNIT_COMMANDER | TEAM_COMMANDER | SOLDIER
-        text position_function    %% OPERATIONS | LOGISTICS | HR | GENERIC
-        text position_title       %% "מפקד פלגה", "רס\"פ", ...
-        text scope_mode           %% UNIT_ONLY | UNIT_AND_SUBTREE
+        text position_level
+        text position_function
+        text position_title
+        text scope_mode
         bool is_active
         timestamptz created_at
         timestamptz updated_at
@@ -55,8 +56,8 @@ erDiagram
     MEMBERSHIP_PERMISSIONS {
         uuid id PK
         uuid membership_id FK
-        text code             %% VACATION_APPROVE | EQUIPMENT_MANAGE | ...
-        text mode             %% GRANT | REVOKE
+        text code
+        text mode
         timestamptz created_at
     }
 
