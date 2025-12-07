@@ -1,0 +1,24 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+server/dist/
+client/dist/
+server/.turbo/
+client/.turbo/
+
+# Env / secrets
+.env
+*.env
+server/.env
+client/.env
+
+# Drizzle cache (keep migrations, ignore temp)
+drizzle/*.tmp
+
+# macOS
+.DS_Store
