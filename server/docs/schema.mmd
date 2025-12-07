@@ -1,0 +1,63 @@
+erDiagram
+
+    %% ============================
+    %%   USERS
+    %% ============================
+    USERS {
+        uuid id PK
+        text email
+        text password_hash
+        text display_name
+        text global_role
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    %% ============================
+    %%   ORG UNITS (Hierarchy)
+    %% ============================
+    ORG_UNITS {
+        uuid id PK
+        text name
+        text kind         %% BATTALION | BATTERY | PLATOON | TEAM | GENERIC
+        uuid parent_unit_id FK
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    %% Self-reference: org unit hierarchy
+    ORG_UNITS ||--o{ ORG_UNITS : "parent of"
+
+
+    %% ============================
+    %%   UNIT MEMBERSHIPS
+    %% ============================
+    UNIT_MEMBERSHIPS {
+        uuid id PK
+        uuid user_id FK
+        uuid org_unit_id FK
+        text position_level       %% UNIT_COMMANDER | SUBUNIT_COMMANDER | TEAM_COMMANDER | SOLDIER
+        text position_function    %% OPERATIONS | LOGISTICS | HR | GENERIC
+        text position_title       %% "מפקד פלגה", "רס\"פ", ...
+        text scope_mode           %% UNIT_ONLY | UNIT_AND_SUBTREE
+        bool is_active
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    USERS ||--o{ UNIT_MEMBERSHIPS : "has"
+    ORG_UNITS ||--o{ UNIT_MEMBERSHIPS : "belongs to"
+
+
+    %% ============================
+    %%   MEMBERSHIP PERMISSIONS
+    %% ============================
+    MEMBERSHIP_PERMISSIONS {
+        uuid id PK
+        uuid membership_id FK
+        text code             %% VACATION_APPROVE | EQUIPMENT_MANAGE | ...
+        text mode             %% GRANT | REVOKE
+        timestamptz created_at
+    }
+
+    UNIT_MEMBERSHIPS ||--o{ MEMBERSHIP_PERMISSIONS : "has overrides"
