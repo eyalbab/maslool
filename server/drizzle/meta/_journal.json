@@ -8,6 +8,13 @@
       "when": 1765118167450,
       "tag": "0000_init",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1765271986063,
+      "tag": "0001_add_tasks",
+      "breakpoints": true
     }
   ]
 }
