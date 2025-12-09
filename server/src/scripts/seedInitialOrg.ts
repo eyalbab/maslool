@@ -57,13 +57,13 @@ async function main() {
     team: team.id,
   });
 
-  // 2) Create a user (you) – we'll refine password hashing later
+  // 2) Create a user (you) - we'll refine password hashing later
   const [user] = await db
     .insert(users)
     .values({
       email: "eyal.platoon.cmd@example.com",
       passwordHash: "DEV_ONLY_NOT_HASHED", // TODO: replace with real hash later
-      displayName: "Eyal – Platoon Commander",
+      displayName: "Eyal - Platoon Commander",
       globalRole: "NONE",
     })
     .returning();

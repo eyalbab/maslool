@@ -1,4 +1,4 @@
-# Maslool – Secure Soldier / Commander Operational Dashboard
+# Maslool - Secure Soldier / Commander Operational Dashboard
 
 **Maslool** is a secure operational dashboard system for military-style units (soldiers, team leaders, platoon commanders, battery commanders, logistics NCOs, etc.).  
 
@@ -16,12 +16,12 @@ The focus is on:
 ### Backend (`server/`)
 
 - **Node.js** + **TypeScript**
-- **Fastify** – lightweight, fast HTTP server
-- **PostgreSQL** – relational database
-- **Drizzle ORM** – type-safe queries + migrations
-- **JWT auth** (access + HttpOnly refresh tokens) – to be wired in from a previous auth project
+- **Fastify** - lightweight, fast HTTP server
+- **PostgreSQL** - relational database
+- **Drizzle ORM** - type-safe queries + migrations
+- **JWT auth** (access + HttpOnly refresh tokens) - to be wired in from a previous auth project
 
-### Frontend (`client/`) – planned
+### Frontend (`client/`) - planned
 
 - **React** + **TypeScript**
 - SPA or Next.js (TBD)
@@ -34,13 +34,13 @@ The focus is on:
 
 The system models a generic but realistic military structure:
 
-- **OrgUnit** – hierarchical unit tree  
+- **OrgUnit** - hierarchical unit tree  
   e.g. `BATTALION > BATTERY > PLATOON > TEAM`  
   (in artillery: `גדוד > סוללה > פלגה > צוות`)
 
-- **User** – authenticated identity (email, password hash, display name)
+- **User** - authenticated identity (email, password hash, display name)
 
-- **UnitMembership** – how a user relates to a specific unit:
+- **UnitMembership** - how a user relates to a specific unit:
   - `positionLevel` (e.g. `UNIT_COMMANDER`, `SUBUNIT_COMMANDER`, `TEAM_COMMANDER`, `SOLDIER`)
   - `positionFunction` (e.g. `OPERATIONS`, `LOGISTICS`, `HR`)
   - `scopeMode` (`UNIT_ONLY` vs `UNIT_AND_SUBTREE`)
@@ -49,30 +49,30 @@ The system models a generic but realistic military structure:
     - Platoon commander seeing only their platoon
     - Team commander seeing only their team
 
-- **MembershipPermissions** – per-membership permission overrides:
+- **MembershipPermissions** - per-membership permission overrides:
   - Default permissions are derived from `positionLevel` + `positionFunction`
   - Per-person overrides (GRANT/REVOKE) allow modeling real-world exceptions  
     (e.g. a logistics NCO who also handles man-management)
 
 Upcoming entities (not all implemented yet):
 
-- `Task` – operational tasks assigned to units/soldiers
-- `VacationRequest` – leave/absence workflow
-- `EquipmentRequest` – equipment & logistics workflow
-- `Notification` – in-app notifications
-- `ActivityLog` – audit trail for sensitive actions
-- `AIInsight` – generated summaries / risk assessments per unit
+- `Task` - operational tasks assigned to units/soldiers
+- `VacationRequest` - leave/absence workflow
+- `EquipmentRequest` - equipment & logistics workflow
+- `Notification` - in-app notifications
+- `ActivityLog` - audit trail for sensitive actions
+- `AIInsight` - generated summaries / risk assessments per unit
 
 ---
 
 ## Security & Privacy Principles
 
-- **Least privilege** – every API call is scoped by:
+- **Least privilege** - every API call is scoped by:
   - the caller’s `UnitMembership`
   - derived list of allowed unit IDs (unit + optional subtree)
   - effective permission set (default + membership overrides)
 
-- **Multi-tenant isolation by design** – all queries use unit scoping to prevent cross-unit data leaks.
+- **Multi-tenant isolation by design** - all queries use unit scoping to prevent cross-unit data leaks.
 
 - **Careful logging**:
   - No password hashes or sensitive free-text in logs.

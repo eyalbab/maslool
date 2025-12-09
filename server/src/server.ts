@@ -2,6 +2,8 @@
 import "dotenv/config";
 import Fastify from "fastify";
 import { eq, inArray } from "drizzle-orm";
+import cors from "@fastify/cors";
+
 
 import { db } from "./db/client";
 import { users } from "./db/schemas/users";
@@ -18,6 +20,11 @@ import type { TaskType, TaskPriority } from "./db/schemas/tasks";
 const fastify = Fastify({
   logger: true,
 });
+
+fastify.register(cors, {
+    origin: ["http://localhost:5173"],
+    credentials: true,
+  });
 
 // TEMP: we'll later get userId from JWT.
 // For now, use the seeded user's email from seedInitialOrg.ts
@@ -367,7 +374,7 @@ fastify.get("/debug/me-memberships", async () => {
 
   if (!user) {
     return {
-      error: "DEV user not found – did you run `npm run seed:init`?",
+      error: "DEV user not found - did you run `npm run seed:init`?",
     };
   }
 

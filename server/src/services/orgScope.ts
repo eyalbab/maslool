@@ -62,6 +62,6 @@ export async function getAllowedUnitIdsForMembership(
     return collectSubtreeUnitIds(allUnits, membership.orgUnitId);
   }
 
-  // Fallback – be conservative
+  // Fallback - be conservative
   return [membership.orgUnitId];
 }
