@@ -35,3 +35,15 @@ export interface MeMembershipsResponse {
     isActive: boolean;
   }[];
 }
+
+import { useQuery } from "@tanstack/react-query";
+import { apiGet } from "../../shared/api/httpClient";
+
+const ME_MEMBERSHIPS_QUERY_KEY = ["me-memberships"] as const;
+
+export function useMeMemberships() {
+  return useQuery({
+    queryKey: ME_MEMBERSHIPS_QUERY_KEY,
+    queryFn: () => apiGet<MeMembershipsResponse>("/me/memberships"),
+  });
+}

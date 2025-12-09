@@ -1,76 +1,10 @@
-// client/src/App.tsx
 import "./index.css";
 import "./app.css";
 
-import { useMeMemberships } from "./features/me/api/useMemberships";
-import type { OrgUnitKind } from "./features/me/api/types";
-
-import { useTasks } from "./features/tasks/api/useTasks";
-import type { TaskDTO, TaskType, TaskStatus } from "./features/tasks/api/types";
-
-function formatOrgUnitKind(kind: OrgUnitKind) {
-  switch (kind) {
-    case "BATTALION":
-      return "Battalion";
-    case "BATTERY":
-      return "Battery";
-    case "PLATOON":
-      return "Platoon";
-    case "TEAM":
-      return "Team";
-    default:
-      return "Unit";
-  }
-}
-
-function formatTaskType(type: TaskType): string {
-  switch (type) {
-    case "KITCHEN_DUTY":
-      return "Kitchen duty";
-    case "GUARD_STATIC":
-      return "Guard (static)";
-    case "GUARD_PATROL":
-      return "Guard (patrol)";
-    case "BASE_CLEANING":
-      return "Base cleaning";
-    case "TRAINING_SESSION":
-      return "Training / briefing";
-    case "OTHER_DUTY":
-    default:
-      return "Other duty";
-  }
-}
-
-function formatTaskStatus(status: TaskStatus): string {
-  switch (status) {
-    case "PLANNED":
-      return "Planned";
-    case "IN_PROGRESS":
-      return "In progress";
-    case "COMPLETED":
-      return "Completed";
-    case "CANCELLED":
-      return "Cancelled";
-    default:
-      return status;
-  }
-}
-
-function formatTimeRange(task: TaskDTO): string | null {
-  if (!task.scheduledStart && !task.scheduledEnd) return null;
-
-  const start = task.scheduledStart
-    ? new Date(task.scheduledStart).toLocaleString()
-    : null;
-  const end = task.scheduledEnd
-    ? new Date(task.scheduledEnd).toLocaleString()
-    : null;
-
-  if (start && end) return `${start} → ${end}`;
-  if (start) return `From ${start}`;
-  if (end) return `Until ${end}`;
-  return null;
-}
+import { useMeMemberships } from "./features/me/api";
+import { useTasks } from "./features/tasks/api";
+import { CurrentRoleCard } from "./features/me/CurrentRoleCard";
+import { TaskList } from "./features/tasks/TaskList";
 
 export function App() {
   const {
@@ -109,83 +43,24 @@ export function App() {
       </p>
     );
   } else {
-    const unitLabel = membership.unit
-      ? `${formatOrgUnitKind(membership.unit.kind)} - ${
-          membership.unit.name
-        }`
-      : "Unknown unit";
-
-    roleContent = (
-      <>
-        <h2 className="app-section-title">Current Role</h2>
-        <p>
-          <strong>{meData.user.displayName}</strong>
-        </p>
-        <p>
-          <span className="label">Email:</span> {meData.user.email}
-        </p>
-        <p>
-          <span className="label">Unit:</span> {unitLabel}
-        </p>
-        <p>
-          <span className="label">Position:</span>{" "}
-          {membership.positionTitle || membership.positionLevel}
-        </p>
-        <p>
-          <span className="label">Scope:</span> {membership.scopeMode}
-        </p>
-      </>
-    );
+    roleContent = <CurrentRoleCard data={meData} />;
   }
 
-  let tasksContent: React.ReactNode;
-  if (!membershipId) {
-    tasksContent = null; // don't show tasks block if we don't know who we are
-  } else if (isTasksLoading) {
-    tasksContent = <p>Loading tasks for your unit...</p>;
-  } else if (isTasksError) {
-    const message =
-      tasksError instanceof Error ? tasksError.message : "Unknown error";
-    tasksContent = (
-      <p className="error-text">
-        Failed to load tasks. {message}
-      </p>
-    );
-  } else if (!tasksData || tasksData.tasks.length === 0) {
-    tasksContent = <p>No tasks found for your current role.</p>;
-  } else {
-    tasksContent = (
-      <>
-        <h2 className="app-section-title">Tasks for your unit</h2>
-        <ul className="tasks-list">
-          {tasksData.tasks.map((task) => {
-            const timeRange = formatTimeRange(task);
-            return (
-              <li key={task.id} className="task-item">
-                <div className="task-title-row">
-                  <span className="task-title">{task.title}</span>
-                  <span className={`task-status task-status-${task.status.toLowerCase()}`}>
-                    {formatTaskStatus(task.status)}
-                  </span>
-                </div>
-                <div className="task-meta-row">
-                  <span className="task-type">{formatTaskType(task.type)}</span>
-                  {timeRange && (
-                    <span className="task-time">{timeRange}</span>
-                  )}
-                  <span className="task-priority">
-                    Priority: {task.priority}
-                  </span>
-                </div>
-                {task.description && (
-                  <p className="task-description">{task.description}</p>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      </>
-    );
+  let tasksContent: React.ReactNode = null;
+  if (membershipId) {
+    if (isTasksLoading) {
+      tasksContent = <p>Loading tasks for your unit...</p>;
+    } else if (isTasksError) {
+      const message =
+        tasksError instanceof Error ? tasksError.message : "Unknown error";
+      tasksContent = (
+        <p className="error-text">
+          Failed to load tasks. {message}
+        </p>
+      );
+    } else if (tasksData) {
+      tasksContent = <TaskList tasks={tasksData.tasks} />;
+    }
   }
 
   return (
@@ -193,14 +68,16 @@ export function App() {
       <header className="app-header">
         <h1>Maslool Operational Dashboard</h1>
         <p className="app-subtitle">
-          Secure soldier / commander dashboard - frontend scaffold
+          Secure soldier / commander dashboard – frontend scaffold
         </p>
       </header>
 
       <main className="app-main">
         <section className="app-panel">
           {roleContent}
-          {membershipId && <hr className="section-divider" />}
+          {membershipId && tasksContent && (
+            <hr className="section-divider" />
+          )}
           {tasksContent}
         </section>
       </main>

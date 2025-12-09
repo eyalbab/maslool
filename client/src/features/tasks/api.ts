@@ -1,3 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
+import { apiGet } from "../../shared/api/httpClient";
+
 export type TaskType =
   | "KITCHEN_DUTY"
   | "GUARD_STATIC"
@@ -44,4 +47,19 @@ export interface TasksResponse {
     orgUnitId: string;
   } | null;
   tasks: TaskDTO[];
+}
+
+type UseTasksOptions = {
+  membershipId?: string;
+};
+
+const TASKS_QUERY_KEY = ["tasks"] as const;
+
+export function useTasks({ membershipId }: UseTasksOptions) {
+  return useQuery({
+    queryKey: [...TASKS_QUERY_KEY, { membershipId }],
+    queryFn: () =>
+      apiGet<TasksResponse>(`/tasks?membershipId=${membershipId}`),
+    enabled: !!membershipId,
+  });
 }
