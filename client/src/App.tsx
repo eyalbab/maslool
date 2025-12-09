@@ -5,6 +5,7 @@ import { useMeMemberships } from "./features/me/api";
 import { useTasks } from "./features/tasks/api";
 import { CurrentRoleCard } from "./features/me/CurrentRoleCard";
 import { TaskList } from "./features/tasks/TaskList";
+import { NewTaskForm } from "./features/tasks/NewTaskForm";
 
 export function App() {
   const {
@@ -23,6 +24,9 @@ export function App() {
     isError: isTasksError,
     error: tasksError,
   } = useTasks({ membershipId });
+
+  const activeOrgUnitId =
+    tasksData?.activeMembership?.orgUnitId ?? null;
 
   let roleContent: React.ReactNode;
   if (isMeLoading) {
@@ -52,14 +56,26 @@ export function App() {
       tasksContent = <p>Loading tasks for your unit...</p>;
     } else if (isTasksError) {
       const message =
-        tasksError instanceof Error ? tasksError.message : "Unknown error";
+        tasksError instanceof Error
+          ? tasksError.message
+          : "Unknown error";
       tasksContent = (
         <p className="error-text">
           Failed to load tasks. {message}
         </p>
       );
     } else if (tasksData) {
-      tasksContent = <TaskList tasks={tasksData.tasks} />;
+      tasksContent = (
+        <>
+          {activeOrgUnitId && (
+            <NewTaskForm
+              membershipId={membershipId}
+              orgUnitId={activeOrgUnitId}
+            />
+          )}
+          <TaskList tasks={tasksData.tasks} />
+        </>
+      );
     }
   }
 
