@@ -87,7 +87,7 @@ export function useCreateTask() {
   return useMutation({
     mutationFn: (input: CreateTaskInput) =>
       apiPost<CreateTaskInput, CreateTaskResponse>("/tasks", input),
-    onSuccess: (_data, variables) => {
+    onSuccess: (_data, _variables) => {
       // Invalidate all TASKS queries so lists refetch.
       // React Query will match keys that start with ["tasks"].
       queryClient.invalidateQueries({ queryKey: TASKS_QUERY_KEY });
